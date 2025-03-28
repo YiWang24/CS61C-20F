@@ -1,0 +1,9 @@
+1.set arg1 arg2 arg3
+2.break function_name/file_name:line_number
+3.next
+4.step
+5.continue
+6.print variable
+7.display variable
+8.info locals
+9.quit
