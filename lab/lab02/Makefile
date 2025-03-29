@@ -5,46 +5,37 @@ CFLAGS=-ggdb -Wall -std=c99
 LDFLAGS=
 
 ifeq ($(UNAME_S), Darwin)
-    MEMCHECK=valgrind --tool=memcheck --leak-check=full --track-origins=yes --dsymutil=yes
+    MEMCHECK=valgrind --tool=memcheck --leak-check=full --track-origins=yes --dsymutil=yes --suppressions=osx_vector.supp
 endif
 
 ifeq ($(UNAME_S), Linux)
     MEMCHECK=valgrind --tool=memcheck --leak-check=full --track-origins=yes
 endif
 
-BIT_OPS_OBJS = bit_ops.o test_bit_ops.o
-BIT_OPS_PROG = bit_ops
-
-LFSR_OBJS = lfsr.o test_lfsr.o
-LFSR_PROG = lfsr
-
 VECTOR_OBJS=vector.o vector-test.o
 VECTOR_PROG=vector-test
 
-BINARIES=$(VECTOR_PROG) $(BIT_OPS_PROG) $(LFSR_PROG)
+BINARIES=$(VECTOR_PROG) lfsr bit_ops
 
 all: $(BINARIES)
 
-$(BIT_OPS_PROG): $(BIT_OPS_OBJS)
-	$(CC) $(CFLAGS) -g -o $(BIT_OPS_PROG) $(BIT_OPS_OBJS) $(LDFLAGS)
+$(VECTOR_PROG): $(VECTOR_OBJS)
+	$(LD) -o $(VECTOR_PROG) $(VECTOR_OBJS) $(LDFLAGS)
 
-$(LFSR_PROG): $(LFSR_OBJS)
-	$(CC) $(CFLAGS) -g -o $(LFSR_PROG) $(LFSR_OBJS) $(LDFLAGS)
+lfsr: lfsr.c
+	$(CC) $(CFLAGS) -o lfsr lfsr.c
 
-lfsr.c: lfsr.h
-test_lfsr.c: lfsr.h
-
-bit_ops.c: bit_ops.h
-test_bit_ops.c: bit_ops.h
+bit_ops: bit_ops.c
+	$(CC) $(CFLAGS) -o bit_ops bit_ops.c
 
 .c.o:
-	$(CC) -c $(CFLAGS) $<
+	$(CC) -c -pedantic $(CFLAGS) $<
 
 vector-memcheck: $(VECTOR_PROG)
 	$(MEMCHECK) ./$(VECTOR_PROG)
 
-clean:
+clean: 
 	-rm -rf core *.o *~ "#"*"#" Makefile.bak $(BINARIES) *.dSYM
-
+        
 vector.c: vector.h
 vector-test.c: vector.h
