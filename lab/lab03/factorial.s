@@ -1,7 +1,7 @@
 .globl factorial
 
 .data
-n: .word 8
+n: .word 7
 
 .text
 main:
@@ -22,3 +22,15 @@ main:
 
 factorial:
     # YOUR CODE HERE
+    addi s0,x0,0
+    addi s1,x0,1
+loop:
+    beq s0,a0,exit
+    addi s0,s0,1
+    mul s2,s0,s1
+    addi s1,s2,0
+    j loop
+exit:
+    addi a0,s2,0
+    jr ra
+    

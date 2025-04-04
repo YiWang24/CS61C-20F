@@ -140,6 +140,10 @@ void vector_set(vector_t *v, size_t loc, int value)
     {
         v->size = loc + 1;
         v->data = (int *)realloc(v->data, sizeof(int) * v->size);
+        if (v->data == NULL)
+        {
+            allocation_failed();
+        }
     }
     v->data[loc] = value;
     /* YOUR SOLUTION HERE */
